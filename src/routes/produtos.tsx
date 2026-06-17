@@ -97,8 +97,12 @@ function ProdutosPage() {
             key={p.id}
             className="rounded-2xl bg-card border border-border overflow-hidden flex flex-col"
           >
-            <div className="h-40 bg-accent/40 flex items-center justify-center text-7xl">
-              <span aria-hidden>{p.emoji}</span>
+            <div className="h-40 bg-accent/40 flex items-center justify-center overflow-hidden">
+              {p.imagem ? (
+                <img src={p.imagem} alt={p.nome} className="w-full h-full object-cover" />
+              ) : (
+                <Camera className="size-12 text-muted-foreground" aria-hidden />
+              )}
             </div>
             <div className="p-5 flex-1 flex flex-col">
               <div className="text-xs uppercase tracking-wide text-muted-foreground">
