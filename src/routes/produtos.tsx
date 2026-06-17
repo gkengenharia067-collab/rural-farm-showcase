@@ -228,7 +228,29 @@ function ProdutosPage() {
                   </select>
                 </Field>
               </div>
-              <Field label="URL da Imagem">
+              <Field label="Galeria de imagens">
+                <div className="grid grid-cols-5 gap-2">
+                  {galeriaImagens.map((g) => {
+                    const selecionada = form.imagem === g.url;
+                    return (
+                      <button
+                        type="button"
+                        key={g.url}
+                        onClick={() => setForm({ ...form, imagem: g.url })}
+                        title={g.nome}
+                        className={`relative aspect-square rounded-lg overflow-hidden border-2 transition-all ${
+                          selecionada
+                            ? "border-primary ring-2 ring-primary/30"
+                            : "border-border hover:border-primary/60"
+                        }`}
+                      >
+                        <img src={g.url} alt={g.nome} className="w-full h-full object-cover" />
+                      </button>
+                    );
+                  })}
+                </div>
+              </Field>
+              <Field label="URL da Imagem (opcional)">
                 <input
                   type="url"
                   value={form.imagem}
