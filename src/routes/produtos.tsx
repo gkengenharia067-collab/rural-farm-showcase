@@ -24,7 +24,7 @@ type FormState = {
   estoque: string;
   unidade: string;
   categoria: string;
-  emoji: string;
+  imagem: string;
 };
 
 const emptyForm: FormState = {
@@ -33,7 +33,7 @@ const emptyForm: FormState = {
   estoque: "",
   unidade: "kg",
   categoria: "Hortaliças",
-  emoji: "🌱",
+  imagem: "",
 };
 
 function ProdutosPage() {
@@ -55,7 +55,7 @@ function ProdutosPage() {
       estoque: String(p.estoque),
       unidade: p.unidade,
       categoria: p.categoria,
-      emoji: p.emoji,
+      imagem: p.imagem,
     });
     setOpen(true);
   }
@@ -67,7 +67,7 @@ function ProdutosPage() {
       estoque: Number(form.estoque) || 0,
       unidade: form.unidade,
       categoria: form.categoria,
-      emoji: form.emoji,
+      imagem: form.imagem.trim(),
     };
     if (editing) updateProduto(editing.id, payload);
     else addProduto(payload);
