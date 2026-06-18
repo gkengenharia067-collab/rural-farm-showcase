@@ -107,7 +107,7 @@ function ProdutosPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
         {produtos.map((p) => (
           <article
-            key={p.title}
+            key={p.id}
             className="rounded-2xl bg-card border border-border overflow-hidden flex flex-col"
           >
             <div className="h-40 bg-accent/40 flex items-center justify-center overflow-hidden">
