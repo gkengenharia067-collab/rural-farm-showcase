@@ -219,6 +219,7 @@ function CatalogoPage() {
         </section>
       </main>
       <FloatingWhatsApp />
+      <CartDrawer />
     </div>
   );
 }
