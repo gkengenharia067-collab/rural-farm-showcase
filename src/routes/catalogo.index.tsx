@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, Leaf, MapPin, Search, ShieldCheck, Star, Truck } from "lucide-react";
+import { Leaf, MapPin, ShieldCheck, Truck, Plus } from "lucide-react";
 import { FloatingWhatsApp } from "@/components/FloatingWhatsApp";
+import { CartDrawer } from "@/components/CartDrawer";
 import { useStore } from "@/lib/store";
 
 export const Route = createFileRoute("/catalogo/")({
