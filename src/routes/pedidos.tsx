@@ -100,8 +100,21 @@ function PedidosPage() {
             {p.observacao && <div className="text-sm text-muted-foreground mt-1 italic">"{p.observacao}"</div>}
             
             <div className="mt-3 text-sm border-t border-border pt-3">
-              <div><span className="text-muted-foreground">Produto:</span> {p.produto}</div>
-              <div><span className="text-muted-foreground">Qtd:</span> {p.quantidade}</div>
+              {p.itens && p.itens.length > 0 ? (
+                <ul className="space-y-1 mb-1">
+                  {p.itens.map((it, idx) => (
+                    <li key={idx} className="flex justify-between">
+                      <span><span className="font-medium">{it.quantidade}×</span> {it.produto}</span>
+                      <span className="text-muted-foreground">{formatBRL(it.preco * it.quantidade)}</span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <>
+                  <div><span className="text-muted-foreground">Produto:</span> {p.produto}</div>
+                  <div><span className="text-muted-foreground">Qtd:</span> {p.quantidade}</div>
+                </>
+              )}
               <div className="mt-1 text-lg font-semibold text-primary">{formatBRL(p.valor)}</div>
             </div>
             
