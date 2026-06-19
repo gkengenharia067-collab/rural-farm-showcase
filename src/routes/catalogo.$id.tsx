@@ -28,7 +28,7 @@ function getFullDescription(nome: string, categoria: string) {
 function ProdutoDetalhesPage() {
   const { id } = Route.useParams();
   const router = useRouter();
-  const { produtos, addPedido } = useStore();
+  const { produtos, addToCart, cart } = useStore();
   const produto = produtos.find((p) => p.id === id);
 
   const goBackToCatalogo = () => {
@@ -39,14 +39,9 @@ function ProdutoDetalhesPage() {
     }
   };
 
-  const [modalOpen, setModalOpen] = useState(false);
-  const [success, setSuccess] = useState(false);
-  const [form, setForm] = useState({
-    cliente: "",
-    whatsapp: "",
-    quantidade: "1",
-    observacao: "",
-  });
+  const [qtd, setQtd] = useState(1);
+  const [added, setAdded] = useState(false);
+  const itemNoCarrinho = cart.find((c) => c.id === id);
 
   if (!produto) {
     return (
@@ -61,22 +56,13 @@ function ProdutoDetalhesPage() {
     );
   }
 
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    const qtdNum = Number(form.quantidade) || 1;
-    const valorTotal = qtdNum * produto!.preco;
-
-    addPedido({
-      cliente: form.cliente,
-      whatsapp: form.whatsapp,
-      observacao: form.observacao,
-      produto: produto!.nome,
-      quantidade: `${qtdNum} ${produto!.unidade}`,
-      valor: valorTotal,
-    });
-
-    setSuccess(true);
+  function handleAdd() {
+    addToCart(produto!, qtd);
+    setAdded(true);
+    setTimeout(() => setAdded(false), 2000);
   }
+
+
 
   return (
     <div className="min-h-screen bg-background flex flex-col font-sans">
