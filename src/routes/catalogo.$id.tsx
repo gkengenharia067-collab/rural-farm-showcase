@@ -248,7 +248,6 @@ function ProdutoDetalhesPage() {
         </div>
       </main>
       <FloatingWhatsApp />
-      <CartDrawer />
     </div>
   );
 }
