@@ -13,7 +13,10 @@ export function CartDrawer() {
   const [open, setOpen] = useState(false);
   const [checkout, setCheckout] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const [form, setForm] = useState({ cliente: "", whatsapp: "", observacao: "" });
+
+  useEffect(() => setMounted(true), []);
 
   const totalItens = cart.reduce((a, c) => a + c.quantidade, 0);
   const totalValor = cart.reduce((a, c) => a + c.preco * c.quantidade, 0);
