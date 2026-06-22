@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Leaf, MapPin, ShieldCheck, Truck, Plus } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FloatingWhatsApp } from "@/components/FloatingWhatsApp";
 import { CartDrawer } from "@/components/CartDrawer";
 import { useStore } from "@/lib/store";
