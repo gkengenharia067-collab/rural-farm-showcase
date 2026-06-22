@@ -28,6 +28,8 @@ function getShortDescription(categoria: string) {
 function CatalogoPage() {
   const { produtos, addToCart } = useStore();
   const [cartOpen, setCartOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
   return (
     <div className="min-h-screen bg-background">
