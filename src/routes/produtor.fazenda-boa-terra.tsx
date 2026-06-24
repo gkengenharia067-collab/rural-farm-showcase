@@ -16,23 +16,25 @@ const FALLBACK_IMG = "https://images.unsplash.com/photo-1595859703065-cc958019e0
 
 function ProdutorPerfilPage() {
   const { produtos } = useStore();
-  const [produtosLocal, setProdutosLocal] = useState(produtos);
+  const [produtosLocal, setProdutosLocal] = useState<Produto[]>([]);
 
-  useEffect(() => {
-    setProdutosLocal(produtos);
-  }, [produtos]);
-
+  // 🔥 Carrega do localStorage primeiro, depois sincroniza com o store
   useEffect(() => {
     const saved = localStorage.getItem('@mr/produtos.v2');
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        if (parsed.length > 0) {
+        if (Array.isArray(parsed) && parsed.length > 0) {
           setProdutosLocal(parsed);
+          return;
         }
-      } catch {}
+      } catch (e) {
+        console.error("Erro ao carregar produtos do localStorage:", e);
+      }
     }
-  }, []);
+    // Fallback: usa o store se não houver dados no localStorage
+    setProdutosLocal(produtos);
+  }, [produtos]);
 
   if (!produtosLocal || produtosLocal.length === 0) {
     return (
@@ -100,7 +102,9 @@ function ProdutorPerfilPage() {
           <section className="bg-card rounded-3xl p-8 border border-border shadow-sm">
             <h2 className="text-2xl font-display font-bold text-foreground mb-4">Nossa História</h2>
             <div className="space-y-4 text-muted-foreground leading-relaxed">
-              <p>A Fazenda Boa Terra começou como um sonho de família em 1998...</p>
+              <p>A Fazenda Boa Terra começou como um sonho de família em 1998. Nossa missão sempre foi produzir alimentos saudáveis, respeitando o tempo da natureza e os ciclos do solo. Ao longo das décadas, passamos a adotar técnicas 100% orgânicas, abandonando o uso de qualquer defensivo químico.</p>
+              <p>Hoje, somos referência na região da Serra do Vale em sustentabilidade e produção consciente. Cultivamos hortaliças fresquinhas, mantemos nossas galinhas felizes e livres, e cuidamos de nossas abelhas nativas para produzir um mel puro e artesanal.</p>
+              <p>Acreditamos que a comida de verdade deve chegar fresca à mesa das pessoas. É por isso que abrimos nossas portas virtuais aqui na Terra Viva: para conectar nossa família à sua, sem intermediários.</p>
             </div>
           </section>
 
