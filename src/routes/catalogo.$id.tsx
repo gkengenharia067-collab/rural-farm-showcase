@@ -3,6 +3,7 @@ import { ArrowLeft, Leaf, MapPin, ShieldCheck, Truck, ChevronRight, Info, Plus, 
 import { useStore } from "@/lib/store";
 import { useState, useEffect } from "react";
 import { FloatingWhatsApp } from "@/components/FloatingWhatsApp";
+import { CartDrawer } from "@/components/CartDrawer";
 
 export const Route = createFileRoute("/catalogo/$id")({
   component: ProdutoDetalhesPage,
@@ -84,6 +85,8 @@ function ProdutoDetalhesPage() {
           </div>
         </div>
       </header>
+
+      <CartDrawer />
 
       <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-8 md:py-12 relative">
         {/* Breadcrumb */}

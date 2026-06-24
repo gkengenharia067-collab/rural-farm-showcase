@@ -3,6 +3,7 @@ import { Leaf, MapPin, ShieldCheck, Truck, Plus } from "lucide-react";
 import { useState, useEffect } from "react";
 import { FloatingWhatsApp } from "@/components/FloatingWhatsApp";
 import { useStore } from "@/lib/store";
+import { CartDrawer } from "@/components/CartDrawer";
 
 export const Route = createFileRoute("/catalogo/")({
   component: CatalogoPage,
@@ -48,6 +49,8 @@ function CatalogoPage() {
           </nav>
         </div>
       </header>
+
+      <CartDrawer />
 
       <main>
         {/* Hero Section */}
