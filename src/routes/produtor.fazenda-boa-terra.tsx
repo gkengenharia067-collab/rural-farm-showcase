@@ -17,9 +17,11 @@ const FALLBACK_IMG = "https://images.unsplash.com/photo-1595859703065-cc958019e0
 function ProdutorPerfilPage() {
   const { produtos } = useStore();
   const [produtosLocal, setProdutosLocal] = useState<Produto[]>([]);
+  const [mounted, setMounted] = useState(false);
 
-  // 🔥 Carrega do localStorage primeiro, depois sincroniza com o store
+  // 🔥 Só executa no cliente (depois da montagem)
   useEffect(() => {
+    setMounted(true);
     const saved = localStorage.getItem('@mr/produtos.v2');
     if (saved) {
       try {
@@ -32,11 +34,37 @@ function ProdutorPerfilPage() {
         console.error("Erro ao carregar produtos do localStorage:", e);
       }
     }
-    // Fallback: usa o store se não houver dados no localStorage
     setProdutosLocal(produtos);
   }, [produtos]);
 
-  if (!produtosLocal || produtosLocal.length === 0) {
+  // Se não estiver montado (servidor), renderiza um placeholder ou nada
+  if (!mounted) {
+    return (
+      <div className="min-h-screen bg-background pb-20">
+        {/* Apenas o header e a estrutura básica para não quebrar a hidratação */}
+        <header className="bg-card border-b border-border sticky top-0 z-50">
+          <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
+            <Link to="/catalogo" className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors font-medium text-sm">
+              <ArrowLeft className="size-4" />
+              Voltar ao Catálogo
+            </Link>
+            <div className="flex items-center gap-2">
+              <div className="size-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center shadow-sm">
+                <Leaf className="size-4" />
+              </div>
+              <div className="font-display font-semibold text-lg text-foreground tracking-tight">Terra Viva</div>
+            </div>
+          </div>
+        </header>
+        <main className="max-w-5xl mx-auto px-4 sm:px-6 mt-10">
+          <div className="text-center text-muted-foreground">Carregando produtos...</div>
+        </main>
+      </div>
+    );
+  }
+
+  // 🔥 Renderização completa (apenas no cliente)
+  if (produtosLocal.length === 0) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center text-muted-foreground">Carregando produtos...</div>
@@ -75,12 +103,8 @@ function ProdutorPerfilPage() {
               </div>
               <h1 className="text-3xl md:text-5xl font-display font-bold text-foreground tracking-tight">Fazenda Boa Terra</h1>
               <div className="flex flex-wrap items-center gap-4 text-muted-foreground mt-3 font-medium">
-                <span className="flex items-center gap-1.5">
-                  <MapPin className="size-5 text-primary" /> Serra do Vale, MG
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <CalendarDays className="size-5" /> Na plataforma desde 2022
-                </span>
+                <span className="flex items-center gap-1.5"><MapPin className="size-5 text-primary" /> Serra do Vale, MG</span>
+                <span className="flex items-center gap-1.5"><CalendarDays className="size-5" /> Na plataforma desde 2022</span>
                 <span className="flex items-center gap-1 text-yellow-500">
                   <Star className="size-5 fill-yellow-500" />
                   <span className="text-foreground font-bold">4.9</span>
@@ -115,11 +139,7 @@ function ProdutorPerfilPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="bg-card rounded-2xl p-6 border border-border shadow-sm">
                 <div className="flex text-yellow-500 mb-3">
-                  <Star className="size-4 fill-yellow-500" />
-                  <Star className="size-4 fill-yellow-500" />
-                  <Star className="size-4 fill-yellow-500" />
-                  <Star className="size-4 fill-yellow-500" />
-                  <Star className="size-4 fill-yellow-500" />
+                  <Star className="size-4 fill-yellow-500" /><Star className="size-4 fill-yellow-500" /><Star className="size-4 fill-yellow-500" /><Star className="size-4 fill-yellow-500" /><Star className="size-4 fill-yellow-500" />
                 </div>
                 <p className="text-foreground italic mb-4">"Tomates incrivelmente saborosos! Fazia tempo que eu não comia uma salada tão gostosa. A entrega foi muito cuidadosa."</p>
                 <div className="text-sm text-muted-foreground font-medium flex items-center justify-between">
@@ -129,11 +149,7 @@ function ProdutorPerfilPage() {
               </div>
               <div className="bg-card rounded-2xl p-6 border border-border shadow-sm">
                 <div className="flex text-yellow-500 mb-3">
-                  <Star className="size-4 fill-yellow-500" />
-                  <Star className="size-4 fill-yellow-500" />
-                  <Star className="size-4 fill-yellow-500" />
-                  <Star className="size-4 fill-yellow-500" />
-                  <Star className="size-4 fill-yellow-500" />
+                  <Star className="size-4 fill-yellow-500" /><Star className="size-4 fill-yellow-500" /><Star className="size-4 fill-yellow-500" /><Star className="size-4 fill-yellow-500" /><Star className="size-4 fill-yellow-500" />
                 </div>
                 <p className="text-foreground italic mb-4">"O mel artesanal é um espetáculo. Dá pra sentir que é puro. Minha família inteira amou, viramos clientes fixos da fazenda."</p>
                 <div className="text-sm text-muted-foreground font-medium flex items-center justify-between">
@@ -159,6 +175,7 @@ function ProdutorPerfilPage() {
                       src={p.imagem || FALLBACK_IMG}
                       alt={p.nome}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      loading="lazy"
                     />
                   </div>
                   <div className="flex flex-col justify-center">
@@ -185,24 +202,15 @@ function ProdutorPerfilPage() {
             <ul className="space-y-5 text-sm">
               <li className="flex items-start gap-3">
                 <Truck className="size-5 text-primary shrink-0" />
-                <div>
-                  <div className="font-semibold text-foreground">Entregas semanais</div>
-                  <div className="text-muted-foreground mt-0.5">Entregamos todas as terças e sextas na região metropolitana.</div>
-                </div>
+                <div><div className="font-semibold text-foreground">Entregas semanais</div><div className="text-muted-foreground mt-0.5">Entregamos todas as terças e sextas na região metropolitana.</div></div>
               </li>
               <li className="flex items-start gap-3">
                 <ShieldCheck className="size-5 text-primary shrink-0" />
-                <div>
-                  <div className="font-semibold text-foreground">100% Orgânico</div>
-                  <div className="text-muted-foreground mt-0.5">Sem uso de pesticidas ou fertilizantes químicos na nossa terra.</div>
-                </div>
+                <div><div className="font-semibold text-foreground">100% Orgânico</div><div className="text-muted-foreground mt-0.5">Sem uso de pesticidas ou fertilizantes químicos na nossa terra.</div></div>
               </li>
               <li className="flex items-start gap-3">
                 <Leaf className="size-5 text-primary shrink-0" />
-                <div>
-                  <div className="font-semibold text-foreground">Sustentabilidade</div>
-                  <div className="text-muted-foreground mt-0.5">Usamos embalagens ecológicas e compostáveis em todos os envios para reduzir o impacto ambiental.</div>
-                </div>
+                <div><div className="font-semibold text-foreground">Sustentabilidade</div><div className="text-muted-foreground mt-0.5">Usamos embalagens ecológicas e compostáveis em todos os envios para reduzir o impacto ambiental.</div></div>
               </li>
             </ul>
           </div>
