@@ -36,8 +36,7 @@ function ProdutorPerfilPage() {
     setProdutosLocal(produtos);
   }, [produtos]);
 
-  // 🔥 Servidor renderiza array vazio (mostra "Carregando...")
-  // 🔥 Cliente renderiza a lista do localStorage
+  // 🔥 CORREÇÃO: servidor renderiza array vazio, cliente renderiza a lista
   const produtosExibir = mounted ? produtosLocal : [];
 
   if (!produtosExibir || produtosExibir.length === 0) {
