@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Leaf, MapPin, ShieldCheck, Truck, Plus } from "lucide-react";
+import { Leaf, MapPin, ShieldCheck, Truck, Plus, ArrowLeft } from "lucide-react";
 import { useState, useEffect } from "react";
 import { FloatingWhatsApp } from "@/components/FloatingWhatsApp";
 import { CartDrawer } from "@/components/CartDrawer";
@@ -15,7 +15,6 @@ function formatBRL(n: number) {
 
 const FALLBACK_IMG = "https://images.unsplash.com/photo-1595859703065-cc958019e07b?w=800&q=80";
 
-// 🔥 Função para carregar os dados da fazenda do localStorage
 function getFazenda() {
   try {
     const saved = localStorage.getItem('@mr/fazenda');
@@ -40,7 +39,6 @@ function CatalogoPage() {
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
-  // 🔥 Carrega os dados da fazenda
   const fazenda = getFazenda();
 
   return (
@@ -55,6 +53,10 @@ function CatalogoPage() {
             <div className="font-display font-bold text-xl text-foreground tracking-tight">{fazenda.nome}</div>
           </div>
           <nav className="hidden sm:flex items-center gap-6 text-sm font-medium text-muted-foreground">
+            <Link to="/" className="flex items-center gap-2 text-primary font-semibold hover:opacity-80 transition-all">
+              <ArrowLeft className="size-4" />
+              Voltar ao painel
+            </Link>
             <Link to="/catalogo" className="text-primary font-semibold">Início</Link>
             <a href="#produtos" className="hover:text-foreground cursor-pointer transition-colors">Produtos</a>
             <Link to="/produtor/fazenda-boa-terra" className="hover:text-foreground cursor-pointer transition-colors">Sobre a Fazenda</Link>
