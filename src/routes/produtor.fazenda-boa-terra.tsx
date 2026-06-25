@@ -14,10 +14,21 @@ function formatBRL(n: number) {
 
 const FALLBACK_IMG = "https://images.unsplash.com/photo-1595859703065-cc958019e07b?w=800&q=80";
 
+// 🔥 Função para carregar os dados da fazenda do localStorage
+function getFazenda() {
+  try {
+    const saved = localStorage.getItem('@mr/fazenda');
+    return saved ? JSON.parse(saved) : { nome: 'Fazenda Boa Terra', telefone: '', cidade: 'Serra do Vale, MG', descricao: '', whatsapp: '' };
+  } catch {
+    return { nome: 'Fazenda Boa Terra', telefone: '', cidade: 'Serra do Vale, MG', descricao: '', whatsapp: '' };
+  }
+}
+
 function ProdutorPerfilPage() {
   const { produtos } = useStore();
   const [produtosLocal, setProdutosLocal] = useState<Produto[]>([]);
   const [mounted, setMounted] = useState(false);
+  const fazenda = getFazenda();
 
   useEffect(() => {
     setMounted(true);
@@ -36,7 +47,6 @@ function ProdutorPerfilPage() {
     setProdutosLocal(produtos);
   }, [produtos]);
 
-  // 🔥 CORREÇÃO: servidor renderiza array vazio, cliente renderiza a lista
   const produtosExibir = mounted ? produtosLocal : [];
 
   if (!produtosExibir || produtosExibir.length === 0) {
@@ -52,7 +62,7 @@ function ProdutorPerfilPage() {
               <div className="size-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center shadow-sm">
                 <Leaf className="size-4" />
               </div>
-              <div className="font-display font-semibold text-lg text-foreground tracking-tight">Terra Viva</div>
+              <div className="font-display font-semibold text-lg text-foreground tracking-tight">{fazenda.nome}</div>
             </div>
           </div>
         </header>
@@ -69,6 +79,7 @@ function ProdutorPerfilPage() {
 
   return (
     <div className="min-h-screen bg-background pb-20">
+      {/* Top Navbar */}
       <header className="bg-card border-b border-border sticky top-0 z-50">
         <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
           <Link to="/catalogo" className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors font-medium text-sm">
@@ -79,27 +90,45 @@ function ProdutorPerfilPage() {
             <div className="size-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center shadow-sm">
               <Leaf className="size-4" />
             </div>
-            <div className="font-display font-semibold text-lg text-foreground tracking-tight">Terra Viva</div>
+            <div className="font-display font-semibold text-lg text-foreground tracking-tight">{fazenda.nome}</div>
           </div>
         </div>
       </header>
 
+      {/* Capa e Perfil */}
       <div className="relative bg-card border-b border-border">
+        {/* Cover Image */}
         <div className="h-64 md:h-80 w-full overflow-hidden bg-muted">
-          <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=2000&q=80" alt="Capa da Fazenda" className="w-full h-full object-cover opacity-90" />
+          <img 
+            src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=2000&q=80" 
+            alt="Capa da Fazenda" 
+            className="w-full h-full object-cover opacity-90"
+          />
         </div>
+
+        {/* Informações do Perfil */}
         <div className="max-w-5xl mx-auto px-4 sm:px-6 relative pb-8">
           <div className="flex flex-col md:flex-row md:items-end gap-6 md:gap-8 -mt-20 md:-mt-24 relative z-10 mb-6">
-            <img src="https://images.unsplash.com/photo-1589923188900-85dae523342b?w=400&h=400&fit=crop&q=80" alt="Perfil da Fazenda Boa Terra" className="size-36 md:size-48 rounded-3xl border-4 border-background shadow-xl object-cover bg-muted" />
+            <img 
+              src="https://images.unsplash.com/photo-1589923188900-85dae523342b?w=400&h=400&fit=crop&q=80" 
+              alt="Perfil da Fazenda"
+              className="size-36 md:size-48 rounded-3xl border-4 border-background shadow-xl object-cover bg-muted"
+            />
             <div className="flex-1 pb-2 mt-4 md:mt-0">
               <div className="inline-flex items-center gap-1.5 bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-3">
                 <ShieldCheck className="size-4" />
                 Produtor Verificado
               </div>
-              <h1 className="text-3xl md:text-5xl font-display font-bold text-foreground tracking-tight">Fazenda Boa Terra</h1>
+              <h1 className="text-3xl md:text-5xl font-display font-bold text-foreground tracking-tight">
+                {fazenda.nome}
+              </h1>
               <div className="flex flex-wrap items-center gap-4 text-muted-foreground mt-3 font-medium">
-                <span className="flex items-center gap-1.5"><MapPin className="size-5 text-primary" /> Serra do Vale, MG</span>
-                <span className="flex items-center gap-1.5"><CalendarDays className="size-5" /> Na plataforma desde 2022</span>
+                <span className="flex items-center gap-1.5">
+                  <MapPin className="size-5 text-primary" /> {fazenda.cidade || "Serra do Vale, MG"}
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <CalendarDays className="size-5" /> Na plataforma desde 2022
+                </span>
                 <span className="flex items-center gap-1 text-yellow-500">
                   <Star className="size-5 fill-yellow-500" />
                   <span className="text-foreground font-bold">4.9</span>
@@ -121,8 +150,8 @@ function ProdutorPerfilPage() {
           <section className="bg-card rounded-3xl p-8 border border-border shadow-sm">
             <h2 className="text-2xl font-display font-bold text-foreground mb-4">Nossa História</h2>
             <div className="space-y-4 text-muted-foreground leading-relaxed">
-              <p>A Fazenda Boa Terra começou como um sonho de família em 1998. Nossa missão sempre foi produzir alimentos saudáveis, respeitando o tempo da natureza e os ciclos do solo. Ao longo das décadas, passamos a adotar técnicas 100% orgânicas, abandonando o uso de qualquer defensivo químico.</p>
-              <p>Hoje, somos referência na região da Serra do Vale em sustentabilidade e produção consciente. Cultivamos hortaliças fresquinhas, mantemos nossas galinhas felizes e livres, e cuidamos de nossas abelhas nativas para produzir um mel puro e artesanal.</p>
+              <p>{fazenda.descricao || "A Fazenda Boa Terra começou como um sonho de família em 1998. Nossa missão sempre foi produzir alimentos saudáveis, respeitando o tempo da natureza e os ciclos do solo. Ao longo das décadas, passamos a adotar técnicas 100% orgânicas, abandonando o uso de qualquer defensivo químico."}</p>
+              <p>Hoje, somos referência na região em sustentabilidade e produção consciente. Cultivamos hortaliças fresquinhas, mantemos nossas galinhas felizes e livres, e cuidamos de nossas abelhas nativas para produzir um mel puro e artesanal.</p>
               <p>Acreditamos que a comida de verdade deve chegar fresca à mesa das pessoas. É por isso que abrimos nossas portas virtuais aqui na Terra Viva: para conectar nossa família à sua, sem intermediários.</p>
             </div>
           </section>
@@ -197,15 +226,24 @@ function ProdutorPerfilPage() {
             <ul className="space-y-5 text-sm">
               <li className="flex items-start gap-3">
                 <Truck className="size-5 text-primary shrink-0" />
-                <div><div className="font-semibold text-foreground">Entregas semanais</div><div className="text-muted-foreground mt-0.5">Entregamos todas as terças e sextas na região metropolitana.</div></div>
+                <div>
+                  <div className="font-semibold text-foreground">Entregas semanais</div>
+                  <div className="text-muted-foreground mt-0.5">Entregamos todas as terças e sextas na região metropolitana.</div>
+                </div>
               </li>
               <li className="flex items-start gap-3">
                 <ShieldCheck className="size-5 text-primary shrink-0" />
-                <div><div className="font-semibold text-foreground">100% Orgânico</div><div className="text-muted-foreground mt-0.5">Sem uso de pesticidas ou fertilizantes químicos na nossa terra.</div></div>
+                <div>
+                  <div className="font-semibold text-foreground">100% Orgânico</div>
+                  <div className="text-muted-foreground mt-0.5">Sem uso de pesticidas ou fertilizantes químicos na nossa terra.</div>
+                </div>
               </li>
               <li className="flex items-start gap-3">
                 <Leaf className="size-5 text-primary shrink-0" />
-                <div><div className="font-semibold text-foreground">Sustentabilidade</div><div className="text-muted-foreground mt-0.5">Usamos embalagens ecológicas e compostáveis em todos os envios para reduzir o impacto ambiental.</div></div>
+                <div>
+                  <div className="font-semibold text-foreground">Sustentabilidade</div>
+                  <div className="text-muted-foreground mt-0.5">Usamos embalagens ecológicas e compostáveis em todos os envios para reduzir o impacto ambiental.</div>
+                </div>
               </li>
             </ul>
           </div>
