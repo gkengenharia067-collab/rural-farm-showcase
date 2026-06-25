@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Plus, ShoppingBag, Leaf, Save, CheckCircle } from "lucide-react";
+import { Plus, ShoppingBag, Leaf, Save, CheckCircle, Upload } from "lucide-react";
 import { useStore } from "@/lib/store";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 export const Route = createFileRoute("/")({
   component: DashboardPage,
@@ -17,13 +17,31 @@ function DashboardPage() {
   const [fazenda, setFazenda] = useState(() => {
     try {
       const saved = localStorage.getItem('@mr/fazenda');
-      return saved ? JSON.parse(saved) : { nome: '', telefone: '', cidade: '', descricao: '', whatsapp: '' };
+      return saved ? JSON.parse(saved) : { 
+        nome: '', 
+        telefone: '', 
+        cidade: '', 
+        descricao: '', 
+        whatsapp: '',
+        logo: '',
+        capa: ''
+      };
     } catch {
-      return { nome: '', telefone: '', cidade: '', descricao: '', whatsapp: '' };
+      return { 
+        nome: '', 
+        telefone: '', 
+        cidade: '', 
+        descricao: '', 
+        whatsapp: '',
+        logo: '',
+        capa: ''
+      };
     }
   });
 
   const [salvo, setSalvo] = useState(false);
+  const logoInputRef = useRef<HTMLInputElement>(null);
+  const capaInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     localStorage.setItem('@mr/fazenda', JSON.stringify(fazenda));
@@ -45,9 +63,30 @@ function DashboardPage() {
     setSalvo(true);
   };
 
+  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFazenda({ ...fazenda, logo: reader.result as string });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleCapaUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFazenda({ ...fazenda, capa: reader.result as string });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
-      {/* Header com navegação e botão "Ver minha loja" */}
       <header className="bg-card border-b border-border sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
@@ -60,7 +99,6 @@ function DashboardPage() {
             <Link to="/" className="text-primary font-semibold">Dashboard</Link>
             <Link to="/pedidos" className="hover:text-foreground cursor-pointer transition-colors">Pedidos</Link>
             <Link to="/produtos" className="hover:text-foreground cursor-pointer transition-colors">Meus Produtos</Link>
-            {/* 🔥 BOTÃO "MINHA FAZENDA" REMOVIDO */}
             <Link to="/catalogo" className="bg-primary text-primary-foreground px-4 py-2 rounded-full text-sm font-bold hover:opacity-90 transition-all shadow-sm">
               Ver minha loja
             </Link>
@@ -112,7 +150,7 @@ function DashboardPage() {
           </Link>
         </div>
 
-        {/* Card "Minha Fazenda" */}
+        {/* Card "Minha Fazenda" com upload de logo e capa */}
         <div className="bg-card p-6 rounded-2xl border border-border shadow-sm">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-2xl font-display font-bold text-foreground">Minha Fazenda</h2>
@@ -124,6 +162,7 @@ function DashboardPage() {
             )}
           </div>
           <p className="text-muted-foreground text-sm mb-4">Preencha os dados da sua propriedade para aparecer na loja.</p>
+          
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-foreground mb-1.5">Nome da fazenda</label>
@@ -166,6 +205,7 @@ function DashboardPage() {
               />
             </div>
           </div>
+
           <div className="mt-4">
             <label className="block text-sm font-medium text-foreground mb-1.5">Descrição</label>
             <textarea
@@ -175,6 +215,67 @@ function DashboardPage() {
               placeholder="Conte um pouco sobre sua fazenda..."
             />
           </div>
+
+          {/* 🔥 Upload de Logo */}
+          <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-1.5">Logo da fazenda</label>
+              <div className="flex items-center gap-4">
+                <button
+                  type="button"
+                  onClick={() => logoInputRef.current?.click()}
+                  className="inline-flex items-center gap-2 px-4 py-2 border border-border rounded-xl hover:bg-muted transition-all"
+                >
+                  <Upload className="size-4" />
+                  Escolher logo
+                </button>
+                <input
+                  ref={logoInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleLogoUpload}
+                  className="hidden"
+                />
+                {fazenda.logo && (
+                  <span className="text-sm text-green-600">Logo carregada</span>
+                )}
+              </div>
+              {fazenda.logo && (
+                <div className="mt-2">
+                  <img src={fazenda.logo} alt="Logo" className="h-12 w-auto object-contain" />
+                </div>
+              )}
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-1.5">Foto de capa</label>
+              <div className="flex items-center gap-4">
+                <button
+                  type="button"
+                  onClick={() => capaInputRef.current?.click()}
+                  className="inline-flex items-center gap-2 px-4 py-2 border border-border rounded-xl hover:bg-muted transition-all"
+                >
+                  <Upload className="size-4" />
+                  Escolher capa
+                </button>
+                <input
+                  ref={capaInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleCapaUpload}
+                  className="hidden"
+                />
+                {fazenda.capa && (
+                  <span className="text-sm text-green-600">Capa carregada</span>
+                )}
+              </div>
+              {fazenda.capa && (
+                <div className="mt-2">
+                  <img src={fazenda.capa} alt="Capa" className="h-20 w-full object-cover rounded-xl" />
+                </div>
+              )}
+            </div>
+          </div>
+
           <div className="mt-4 flex justify-end">
             <button
               onClick={handleSave}
