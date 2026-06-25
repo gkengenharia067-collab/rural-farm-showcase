@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Plus, ShoppingBag, Leaf, MapPin, Phone, MessageCircle } from "lucide-react";
+import { Plus, ShoppingBag, Leaf, MapPin, Phone, MessageCircle, Save, CheckCircle } from "lucide-react";
 import { useStore } from "@/lib/store";
 import { useState, useEffect } from "react";
 
@@ -24,14 +24,29 @@ function DashboardPage() {
     }
   });
 
+  const [salvo, setSalvo] = useState(false);
+
   // 🔥 Salva automaticamente no localStorage sempre que mudar
   useEffect(() => {
     localStorage.setItem('@mr/fazenda', JSON.stringify(fazenda));
   }, [fazenda]);
 
+  // 🔥 Feedback visual de salvamento
+  useEffect(() => {
+    if (salvo) {
+      const timer = setTimeout(() => setSalvo(false), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [salvo]);
+
   const totalProdutos = produtos.length;
   const pedidosPendentes = pedidos.filter(p => p.status === "Pendente").length;
   const totalVendas = pedidos.reduce((acc, p) => acc + p.valor, 0);
+
+  const handleSave = () => {
+    localStorage.setItem('@mr/fazenda', JSON.stringify(fazenda));
+    setSalvo(true);
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -99,9 +114,17 @@ function DashboardPage() {
           </Link>
         </div>
 
-        {/* 🔥 Card "Minha Fazenda" – Sprint 2 */}
+        {/* 🔥 Card "Minha Fazenda" – com persistência e botão Salvar */}
         <div className="bg-card p-6 rounded-2xl border border-border shadow-sm">
-          <h2 className="text-2xl font-display font-bold text-foreground mb-4">Minha Fazenda</h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-2xl font-display font-bold text-foreground">Minha Fazenda</h2>
+            {salvo && (
+              <span className="flex items-center gap-1 text-green-600 text-sm font-medium">
+                <CheckCircle className="size-4" />
+                Dados salvos!
+              </span>
+            )}
+          </div>
           <p className="text-muted-foreground text-sm mb-4">Preencha os dados da sua propriedade para aparecer na loja.</p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
@@ -153,6 +176,15 @@ function DashboardPage() {
               className="w-full border border-border rounded-xl bg-background px-4 py-3 outline-none focus:border-primary resize-none h-24"
               placeholder="Conte um pouco sobre sua fazenda..."
             />
+          </div>
+          <div className="mt-4 flex justify-end">
+            <button
+              onClick={handleSave}
+              className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-xl font-bold hover:opacity-90 transition-all shadow-sm"
+            >
+              <Save className="size-5" />
+              Salvar dados
+            </button>
           </div>
         </div>
       </main>
