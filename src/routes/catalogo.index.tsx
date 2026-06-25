@@ -15,6 +15,16 @@ function formatBRL(n: number) {
 
 const FALLBACK_IMG = "https://images.unsplash.com/photo-1595859703065-cc958019e07b?w=800&q=80";
 
+// 🔥 Função para carregar os dados da fazenda do localStorage
+function getFazenda() {
+  try {
+    const saved = localStorage.getItem('@mr/fazenda');
+    return saved ? JSON.parse(saved) : { nome: 'Terra Viva', cidade: 'Serra do Vale, MG', descricao: '', whatsapp: '' };
+  } catch {
+    return { nome: 'Terra Viva', cidade: 'Serra do Vale, MG', descricao: '', whatsapp: '' };
+  }
+}
+
 function getShortDescription(categoria: string) {
   const map: Record<string, string> = {
     "Hortaliças": "Colhido no dia, livre de agrotóxicos.",
@@ -30,6 +40,9 @@ function CatalogoPage() {
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
+  // 🔥 Carrega os dados da fazenda
+  const fazenda = getFazenda();
+
   return (
     <div className="min-h-screen bg-background">
       {/* Top Navbar */}
@@ -39,7 +52,7 @@ function CatalogoPage() {
             <div className="size-9 rounded-xl bg-primary text-primary-foreground flex items-center justify-center shadow-sm">
               <Leaf className="size-5" />
             </div>
-            <div className="font-display font-bold text-xl text-foreground tracking-tight">Terra Viva</div>
+            <div className="font-display font-bold text-xl text-foreground tracking-tight">{fazenda.nome}</div>
           </div>
           <nav className="hidden sm:flex items-center gap-6 text-sm font-medium text-muted-foreground">
             <Link to="/catalogo" className="text-primary font-semibold">Início</Link>
@@ -50,7 +63,7 @@ function CatalogoPage() {
         </div>
       </header>
 
-      {/* 🔥 SACOLA STICKY NO TOPO (ABAIXO DO HEADER) */}
+      {/* 🔥 SACOLA STICKY NO TOPO */}
       <CartDrawer onOpenChange={setCartOpen} />
 
       <main>
@@ -59,7 +72,7 @@ function CatalogoPage() {
           <div className="absolute inset-0 z-0">
             <img 
               src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=2000&q=80" 
-              alt="Fazenda Boa Terra" 
+              alt="Capa da Fazenda" 
               className="w-full h-full object-cover opacity-20"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-card via-card/80 to-transparent" />
@@ -70,16 +83,16 @@ function CatalogoPage() {
               Produtor Verificado
             </div>
             <h1 className="text-4xl md:text-6xl font-display font-bold text-foreground mb-6 tracking-tight">
-              Fazenda Boa Terra
+              {fazenda.nome}
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-              Cultivando saúde e sabor desde 1998. Levamos até a sua mesa alimentos frescos, sustentáveis e repletos de carinho, direto de nossa propriedade na Serra do Vale.
+              {fazenda.descricao || "Cultivando saúde e sabor desde 1998. Levamos até a sua mesa alimentos frescos, sustentáveis e repletos de carinho, direto de nossa propriedade na Serra do Vale."}
             </p>
             
             <div className="mt-10 flex flex-wrap items-center justify-center gap-6 sm:gap-12 text-sm text-foreground font-medium">
               <div className="flex items-center gap-2">
                 <MapPin className="size-5 text-primary" />
-                Serra do Vale, MG
+                {fazenda.cidade || "Serra do Vale, MG"}
               </div>
               <div className="flex items-center gap-2">
                 <ShieldCheck className="size-5 text-primary" />
@@ -194,12 +207,12 @@ function CatalogoPage() {
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <a href="https://wa.me/5567999222720" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center text-center p-8 rounded-3xl bg-muted/30 border border-border hover:bg-muted/50 hover:border-primary/50 transition-all cursor-pointer">
+              <a href={`https://wa.me/55${fazenda.whatsapp || '67999222720'}`} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center text-center p-8 rounded-3xl bg-muted/30 border border-border hover:bg-muted/50 hover:border-primary/50 transition-all cursor-pointer">
                 <div className="size-14 rounded-2xl bg-[#25D366]/10 text-[#25D366] flex items-center justify-center mb-5">
                   <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
                 </div>
                 <h3 className="font-bold text-lg text-foreground mb-1">WhatsApp</h3>
-                <p className="text-muted-foreground">+55 67 99922-2720</p>
+                <p className="text-muted-foreground">{fazenda.whatsapp ? `+55 ${fazenda.whatsapp}` : '+55 67 99922-2720'}</p>
                 <p className="text-sm text-[#25D366] font-medium mt-2">Respostas em até 2 horas</p>
               </a>
 
@@ -208,8 +221,8 @@ function CatalogoPage() {
                   <MapPin className="size-7" />
                 </div>
                 <h3 className="font-bold text-lg text-foreground mb-1">Localização</h3>
-                <p className="text-muted-foreground">Estrada do Vale, Km 12</p>
-                <p className="text-sm text-muted-foreground mt-2">Serra do Vale, MG</p>
+                <p className="text-muted-foreground">{fazenda.cidade || "Serra do Vale, MG"}</p>
+                <p className="text-sm text-muted-foreground mt-2">Estrada do Vale, Km 12</p>
               </div>
 
               <div className="flex flex-col items-center text-center p-8 rounded-3xl bg-muted/30 border border-border">
